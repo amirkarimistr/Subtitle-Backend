@@ -199,35 +199,45 @@ def sel_sub(page, sub_count=30, name=""):
     sub_list = []
     current_sub = 0
     for tr in soup.find_all("tr"):
-        subtitles_dic = {}
-        # Link
         for link in tr.find_all("td", {"class": "a1"}):
-            url = link.find("a").get('href')
-            subtitles_dic['url'] = 'https://subscene.com' + url
+            link = link.find("a")
+            if (
+                    current_sub < sub_count
+                    and "trailer" not in link.text.lower()
+                    and link.get("href") not in sub_list
+                    and DEFAULT_LANG.lower() in link.get("href")
+            ):
+                subtitles_dic = {}
+                # Link
+                for link in tr.find_all("td", {"class": "a1"}):
+                    url = link.find("a").get('href')
+                    subtitles_dic['url'] = 'https://subscene.com' + url
 
-            language = link.find('span').text.strip()
-            subtitles_dic['language'] = language
+                    language = link.find('span').text.strip()
+                    subtitles_dic['language'] = language
 
-            title = link.find('span').find_next('span').text.strip()
-            subtitles_dic['title'] = title
-        # Author
-        for author in tr.find_all("td", {"class": "a5"}):
-            name = author.find('a').text.strip()
-            url = author.find('a').get('href')
+                    title = link.find('span').find_next('span').text.strip()
+                    subtitles_dic['title'] = title
+                # Author
+                for author in tr.find_all("td", {"class": "a5"}):
+                    name = author.find('a').text.strip()
+                    url = author.find('a').get('href')
 
-            subtitles_dic['author'] = {
-                'name': name,
-                'url': url
-            }
-        # Comment
-        for comment in tr.find_all("td", {"class": "a6"}):
-            comment = comment.find('div').text.strip()
-            subtitles_dic['comment'] = comment
+                    subtitles_dic['author'] = {
+                        'name': name,
+                        'url': url
+                    }
+                # Comment
+                for comment in tr.find_all("td", {"class": "a6"}):
+                    comment = comment.find('div').text.strip()
+                    subtitles_dic['comment'] = comment
 
-            sub_list.append(subtitles_dic)
+                    sub_list.append(subtitles_dic)
+
+                    current_sub += 1
 
     detail_dic = {}
-    #IMDB
+    # IMDB
     imdb = soup.find('a', {"class": "imdb"}).get('href')
     detail_dic['imdb'] = imdb
     # Title

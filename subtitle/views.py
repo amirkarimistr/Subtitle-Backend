@@ -20,7 +20,7 @@ class SearchSubtitle(APIView):
                     error_message = "Sorry, the subtitles for this media file aren't available."
                     return Response({'status': False, 'error': error_message}, status=status.HTTP_404_NOT_FOUND)
             elif method == 'getsubs':
-                subtitles = subscene.sel_sub('https://subscene.com/subtitles/power-book-ii-ghost-first-season')
+                subtitles = subscene.sel_sub(q)
                 return Response({'statuss': True, 'result': subtitles})
 
 
