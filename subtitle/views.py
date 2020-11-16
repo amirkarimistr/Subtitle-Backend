@@ -21,8 +21,10 @@ class SearchSubtitle(APIView):
                     return Response({'status': False, 'error': error_message}, status=status.HTTP_404_NOT_FOUND)
             elif method == 'getsubs':
                 subtitles = subscene.sel_sub(q)
-                return Response({'statuss': True, 'result': subtitles})
-
+                return Response({'status': True, 'result': subtitles}, status=status.HTTP_200_OK)
+            elif method == 'subinfo':
+                sub_info = subscene.dl_sub(q)
+                return Response({'status': True, 'result': sub_info}, status=status.HTTP_200_OK)
 
         except:
             return Response({'status': False}, status= status.HTTP_500_INTERNAL_SERVER_ERROR)
