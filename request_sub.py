@@ -187,7 +187,7 @@ def sel_title(name):
 
 
 # Select Subtitles
-def sel_sub(page, sub_count=1, name=""):
+def sel_sub(page, sub_count=30, name=""):
     """
     Select subtitles from the movie page.
     :param sub_count: Number of subtitles to be downloaded.
@@ -198,41 +198,55 @@ def sel_sub(page, sub_count=1, name=""):
     soup = scrape_page(page)
     sub_list = []
     current_sub = 0
-    for link in soup.find_all("td", {"class": "a1"}):
-        link = link.find("a")
-        if (
-            current_sub < sub_count
-            and "trailer" not in link.text.lower()
-            and link.get("href") not in sub_list
-            and DEFAULT_LANG.lower() in link.get("href")
-        ):
-            # if movie = Doctor.Strange.2016, this first condition is not
-            # going to be executed because the length of the list will be 0
-            # we format the name by replacing dots with spaces, which will
-            # split it into the length of the list of two elements (0,1,2)
-            formatted_name = name.replace(".", " ").split()
-            if name.lower() in link.text.lower():
-                sub_list.append(link.get("href"))
-                current_sub += 1
+    for tr in soup.find_all("tr"):
+        subtitles_dic = {}
+        # Link
+        for link in tr.find_all("td", {"class": "a1"}):
+            url = link.find("a").get('href')
+            subtitles_dic['url'] = 'https://subscene.com' + url
 
-            if len(name.split()) > 1:
-                if (
-                    name.split()[1].lower() in link.text.lower()
-                    or name.split()[0].lower() in link.text.lower()
-                ):
-                    sub_list.append(link.get("href"))
-                    current_sub += 1
+            language = link.find('span').text.strip()
+            subtitles_dic['language'] = language
 
-            elif len(formatted_name) > 1:
-                if (
-                    formatted_name[0].lower() in link.text.lower()
-                    or formatted_name[1].lower() in link.text.lower()
-                ):
-                    sub_list.append(link.get("href"))
-                    current_sub += 1
+            title = link.find('span').find_next('span').text.strip()
+            subtitles_dic['title'] = title
+        # Author
+        for author in tr.find_all("td", {"class": "a5"}):
+            name = author.find('a').text.strip()
+            url = author.find('a').get('href')
 
-    # print("--- sel_sub took %s seconds ---" % (time.time() - start_time))
-    return ["https://subscene.com" + i for i in sub_list]
+            subtitles_dic['author'] = {
+                'name': name,
+                'url': url
+            }
+        # Comment
+        for comment in tr.find_all("td", {"class": "a6"}):
+            comment = comment.find('div').text.strip()
+            subtitles_dic['comment'] = comment
+
+            sub_list.append(subtitles_dic)
+
+    detail_dic = {}
+    #IMDB
+    imdb = soup.find('a', {"class": "imdb"}).get('href')
+    detail_dic['imdb'] = imdb
+    # Title
+    title = soup.find('div', {"class": "header"}).find('h2')
+    for child_in_title in title.find_all('a'):
+        child_in_title.decompose()
+
+    detail_dic['title'] = (title.get_text(strip=True).strip())
+    # Poster
+    poster = soup.find('div', {"class": "poster"}).find('img').get('src')
+    detail_dic['poster'] = poster
+    # Year
+    year = soup.find('div', {"class": "header"}).find('li')
+    for child_in_year in year.findAll('strong'):
+        child_in_year.decompose()
+    detail_dic['year'] = (year.get_text(strip=True).strip())
+    detail_dic['subtitles'] = sub_list
+
+    return detail_dic
 
 
 def dl_sub(page):
