@@ -1,0 +1,15 @@
+kind: ExternalService
+name: blogapisubscene
+spec:
+  image_pull_policy: Always
+  port: 80
+  source:
+    context: .
+    media_path: media
+    project_type: django
+    python_version: '3.7'
+    static_path: static_root
+    wsgi: subscene_api.wsgi
+  volume_mounts:
+  - mount_path: /usr/src/app/media
+    sub_path: blogapisubscene/media

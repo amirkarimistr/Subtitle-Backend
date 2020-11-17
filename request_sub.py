@@ -1,6 +1,5 @@
 import logging
 import os
-import re
 import zipfile
 
 import bs4
@@ -267,7 +266,7 @@ def dl_sub(page):
     # start_time = time.time()
     soup = scrape_page(page)
     div = soup.find("div", {"class": "download"})
-    down_link = "https://subscene.com" + div.find("a").get("href")
+    down_link = "https://subf2m.co" + div.find("a").get("href")
     download_dic = {
         'title': '',
         'poster': '',
@@ -279,3 +278,109 @@ def dl_sub(page):
         'download_url': down_link
     }
     return download_dic
+
+
+def new_sub():
+    soup = scrape_page(SUBSCENE_URL)
+
+    popular_list = []
+    popular_tv_list = []
+    recent_list = []
+
+    url_list = []
+    poster_list = []
+    title_list = []
+
+    # Popular Subtitle
+    popular_subtitles = soup.select('div.box')[0]
+    for ul in popular_subtitles.select('ul.details'):
+        # Get Title
+        for div_title in ul.select('div.title'):
+            title = div_title.select_one('a').text.strip()
+            title_list.append(title)
+
+        # Get Poster
+        for div_poster in ul.select('div.poster'):
+            poster = div_poster.select_one('img')['src']
+            poster_list.append(poster)
+
+        # Get URL
+        for movie_url in ul.select('li'):
+            for child_url in movie_url.select('li'):
+                child_url.decompose()
+            try:
+                url = 'https://subscene.com' + movie_url.select_one('a')['href']
+                url_list.append(url)
+            except:
+                ''''
+                Just do nothing 
+                '''
+    for i in range(0, len(title_list)):
+        popular_item = {
+            'title': title_list[i],
+            'poster': poster_list[i],
+            'poseter': poster_list[i],
+            'url': url_list[i]
+        }
+        popular_list.append(popular_item)
+
+    # Popular TV Subtitle
+    popular_tv_shows = soup.select('div.box')[1]
+    for ul in popular_tv_shows.select('ul.details'):
+        popular_tv_item = {}
+        # Get Title
+        for div_title in ul.select('div.title'):
+            title = div_title.select_one('a').text.strip()
+            popular_tv_item['title'] = title
+        # Get Poster
+        for div_poster in ul.select('div.poster'):
+            poster = div_poster.select_one('img')['src']
+            popular_tv_item['poster'] = poster
+            popular_tv_item['poseter'] = poster
+        # Get URL
+        for movie_url in ul.select('li'):
+            for child_url in movie_url.select('li'):
+                child_url.decompose()
+            try:
+                url = 'https://subscene.com' + movie_url.select_one('a')['href']
+                popular_tv_item['url'] = url.strip()
+            except:
+                ''''
+                Just do nothing 
+                '''
+        popular_tv_list.append(popular_tv_item)
+
+    div_content = soup.select_one('div.content')
+    for recent_li in div_content.select('li'):
+        recent_item = {}
+        # Get URL
+        div_name = recent_li.select_one('div.name')
+        url = "https://subscene.com/subtitles" + div_name.select_one('a')['href']
+        recent_item['url'] = url
+
+        # Get Title
+        title = div_name.select_one('a')
+        title_span = title.select_one('span').decompose()
+        recent_item['title'] = title.text.strip()
+
+        # Get Contributor
+        contributor = recent_li.select_one('address')
+        name = contributor.select_one('a').text.strip()
+        url = contributor.select_one('a')['href']
+        recent_item['contributor'] = {
+            'name': name,
+            'url': url
+        }
+
+        recent_list.append(recent_item)
+
+    new_film_dic = {
+        'popular': popular_list,
+        'popular_tv': popular_tv_list,
+        'recent': recent_list
+    }
+    return new_film_dic
+
+
+
+

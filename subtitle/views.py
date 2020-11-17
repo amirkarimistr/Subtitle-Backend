@@ -16,15 +16,24 @@ class SearchSubtitle(APIView):
                 sel_title = subscene.sel_title(q)
                 if sel_title != -1:
                     return Response({'status': True, 'result': sel_title}, status=status.HTTP_200_OK)
+
                 else:
                     error_message = "Sorry, the subtitles for this media file aren't available."
                     return Response({'status': False, 'error': error_message}, status=status.HTTP_404_NOT_FOUND)
+
             elif method == 'getsubs':
                 subtitles = subscene.sel_sub(q)
                 return Response({'status': True, 'result': subtitles}, status=status.HTTP_200_OK)
+
             elif method == 'subinfo':
                 sub_info = subscene.dl_sub(q)
                 return Response({'status': True, 'result': sub_info}, status=status.HTTP_200_OK)
+
+            elif method == 'gethome':
+                new_film = subscene.new_sub()
+
+                return Response({'status': True, 'result': new_film})
+
 
         except:
             return Response({'status': False}, status= status.HTTP_500_INTERNAL_SERVER_ERROR)
