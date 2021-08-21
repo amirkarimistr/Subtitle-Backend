@@ -21,12 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '%#lv&k+77pg=jvr8m--%sfhktci-y1lrq%bw-!)y*+e)$b6=t1'
+SECRET_KEY = '3982c7f2050be31164e9a666e386c539eac88164c8954c8a'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['mydjangobackendapp.herokuapp.com']
 # 'blogapisubscene-seematch.fandogh.cloud'
 
 
