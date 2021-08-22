@@ -23,7 +23,7 @@ LANGUAGE = {
     "VI": "Vietnamese",
 }
 MODE = "prompt"
-DEFAULT_LANG = LANGUAGE["EN"]  # Default language in which subtitles
+DEFAULT_LANG = LANGUAGE["FA"]  # Default language in which subtitles
 # are downloaded.
 
 
@@ -204,7 +204,7 @@ def sel_sub(page, sub_count=30, name=""):
                     current_sub < sub_count
                     and "trailer" not in link.text.lower()
                     and link.get("href") not in sub_list
-                    and DEFAULT_LANG.lower() in link.get("href")
+                   ## and DEFAULT_LANG.lower() in link.get("href")
             ):
                 subtitles_dic = {}
                 # Link
