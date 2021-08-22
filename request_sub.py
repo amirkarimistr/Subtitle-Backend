@@ -281,7 +281,7 @@ def dl_sub(page):
 
 
 def new_sub():
-    soup = scrape_page(SUBSCENE_URL)
+    soup = scrape_page('http://mysub.fun')
 
     popular_list = []
     popular_tv_list = []
