@@ -266,7 +266,7 @@ def dl_sub(page):
     # start_time = time.time()
     soup = scrape_page(page)
     div = soup.find("div", {"class": "download"})
-    down_link = "https://subscene.com" + div.find("a").get("href")
+    down_link = "https://mysub.fun" + div.find("a").get("href")
     download_dic = {
         'title': '',
         'poster': '',
